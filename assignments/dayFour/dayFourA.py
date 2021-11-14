@@ -2,8 +2,7 @@ def one():
     print("Hello World")
 
 # 2
-def func1(name):
-    print("Hi my name is %s" % name)
+func1 = lambda name: print("Hi my name is %s" % name)
 
 # 3
 def func3(x,y,z):
@@ -12,8 +11,7 @@ def func3(x,y,z):
     return y
 
 # 4
-def func4(x,y):
-    return x*y
+func4 = lambda x,y: x*y
 
 # 5
 def is_even(num):
@@ -35,12 +33,7 @@ def seven(*args):
     return sum
 
 # 8
-def eight(*args):
-    evenList = []
-    for i in args:
-        if i % 2 == 0:
-            evenList.append(i)
-    return evenList
+def eight(*args): return [i for i in args if i % 2 == 0 ]
 
 # 9
 def nine(iStr):
