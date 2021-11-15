@@ -26,6 +26,7 @@ def cleanMomRecords():
             if row == 1: headers.append(ws[char + str(row)].value)
             else: record.append(ws[char + str(row)].value)
         if len(record) != 0: recordList.append(record)
+    headers[0] = 'Date'
 
 def logRecord(fList):
     for record in fList:
@@ -85,34 +86,30 @@ def printVocData():
 
 try:
     wb = load_workbook(fileName)
-    ws = wb['Summary Rolling MoM']
-
-    logStart()
-    cleanMomRecords()
-
-    # filter list by requested (inputed) date
-    filtered = filter(lambda record: record[0].date().month == qDate.month and record[0].date().year == qDate.year, recordList)
-
-    headers[0] = 'Date'
-
-    logField = lambda i, field :logging.info("%s: %s" % (headers[i],field))
-
-    logRecord(filtered)
-
-    recordList = []
-    headers = []
-
-    ws = wb['VOC Rolling MoM']
-    cleanVocRecords()
-    cleanMonths()
-
-    recordList = transformVocRecords()
-    addVocReq()
-
-
-    filtered = [filter(lambda record: record[0].month == qDate.month and record[0].year == qDate.year, recordList)]
-
-    printVocData()
+    try:
+        # task 1
+        ws = wb['Summary Rolling MoM']
+        logStart()
+        cleanMomRecords()
+        # filter list by requested (inputed) date
+        filtered = filter(lambda record: record[0].date().month == qDate.month and record[0].date().year == qDate.year, recordList)
+        logField = lambda i, field :logging.info("%s: %s" % (headers[i],field))
+        logRecord(filtered)
+    except:
+        logging.error("An error occurred in our first task.")
+    try:
+        # task 2
+        recordList = []
+        headers = []
+        ws = wb['VOC Rolling MoM']
+        cleanVocRecords()
+        cleanMonths()
+        recordList = transformVocRecords()
+        addVocReq()
+        filtered = [filter(lambda record: record[0].month == qDate.month and record[0].year == qDate.year, recordList)]
+        printVocData()
+    except:
+        logging.error("An error occurred in our second task.")
 
 except OSError as error:
     logging.error("Failed to load %s\n", fileName, error)
