@@ -15,9 +15,9 @@ recordList = []
 headers = []
 
 def logStart():
-    logging.basicConfig(filename='example.log', level=logging.DEBUG)
-    logging.info('Analysing %s' % fileName.split(".")[0])  
-
+    logging.basicConfig(filename='scraper.log', level=logging.DEBUG)
+    logging.debug('Analysing %s' % fileName.split(".")[0])  
+# add first column to [headers], rest to [recordList]
 def cleanMomRecords():
     for row in range(1,14):
         record = []
@@ -44,7 +44,7 @@ def cleanVocRecords():
             record.append(ws[char + str(row)].value)
         if len(record) != 0: recordList.append(record)
     recordList.pop(1)
-
+# convert all string reps to datetime objs
 def cleanMonths():
     i = 0
     for field in recordList[0]:
@@ -52,21 +52,20 @@ def cleanMonths():
             recordList[0][i] = datetime.date(year,months[field.lower()],1)
             i+=1
 
+def addRecord(i):
+    record = []
+    record.append(recordList[0][i])
+    record.append(recordList[1][i])
+    record.append(recordList[2][i])
+    record.append(recordList[3][i])
+    record.append(recordList[4][i])
+    record.append(recordList[5][i])
+    record.append(recordList[6][i])
+    record.append(recordList[7][i])
+    return record
+
 def transformVocRecords():
-    newList = []
-    # create objs
-    for i in range(0,9):
-        record = []
-        record.append(recordList[0][i])
-        record.append(recordList[1][i])
-        record.append(recordList[2][i])
-        record.append(recordList[3][i])
-        record.append(recordList[4][i])
-        record.append(recordList[5][i])
-        record.append(recordList[6][i])
-        record.append(recordList[7][i])
-        newList.append(record)
-    return newList
+    return list(map(addRecord,range(0,9)))
 
 def addVocReq():
     for record in recordList:
@@ -83,22 +82,24 @@ def printVocData():
             for field in record:
                 print(field)
     
-
+logStart()
 try:
     wb = load_workbook(fileName)
     try:
         # task 1
+        logging.debug("Starting first task")
         ws = wb['Summary Rolling MoM']
-        logStart()
         cleanMomRecords()
         # filter list by requested (inputed) date
         filtered = filter(lambda record: record[0].date().month == qDate.month and record[0].date().year == qDate.year, recordList)
         logField = lambda i, field :logging.info("%s: %s" % (headers[i],field))
         logRecord(filtered)
+        logging.debug("Succesfully completed first task.")
     except:
-        logging.error("An error occurred in our first task.")
+        logging.error("An error occurred in first task.")
     try:
         # task 2
+        logging.debug("Starting second task")
         recordList = []
         headers = []
         ws = wb['VOC Rolling MoM']
@@ -108,6 +109,7 @@ try:
         addVocReq()
         filtered = [filter(lambda record: record[0].month == qDate.month and record[0].year == qDate.year, recordList)]
         printVocData()
+        logging.debug("Succesfully completed second task.")
     except:
         logging.error("An error occurred in our second task.")
 
