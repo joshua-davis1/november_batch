@@ -7,7 +7,7 @@ def three():
     np.ones(10)
 
 def four():
-    np.full(1,10)
+    np.full(10,5)
 
 def five():
     np.arange(10,51)
